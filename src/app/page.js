@@ -30,6 +30,7 @@ export default function Home() {
       {
         method: 'GET',
         headers: {
+          'TEST': `${window.location.host}`,
           'Host': `${window.location.host}`,
           'Content-Type': 'application/json',
         },
