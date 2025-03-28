@@ -26,7 +26,7 @@ export default function Home() {
     //   });
 
     fetch(
-      `http://vtexid.vtex.com.br/api/vtexid/pub/authentication/start?appStart=true&scope=nagarropartnerind&accountName=nagarropartnerind&callbackUrl=${window.location.origin}&returnUrl=%2F`,
+      `https://vtexid.vtex.com.br/api/vtexid/pub/authentication/start?appStart=true&scope=nagarropartnerind&accountName=nagarropartnerind&callbackUrl=${window.location.origin}&returnUrl=%2F`,
       {
         method: 'GET',
         headers: {
