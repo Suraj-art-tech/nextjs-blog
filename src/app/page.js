@@ -12,7 +12,7 @@ export default function Home() {
     console.log('Auth Token', authenticationToken);
     console.log('authenticationToken',authenticationToken)
     const openUrl = `http://vtexid.vtex.com.br/api/vtexid/pub/authentication/oauth/redirect?authenticationToken=${authenticationToken}&providerName=Google`;
-    window.open(openUrl);
+    window.open(openUrl, "popupWindow", "width=600,height=400,scrollbars=yes,resizable=yes");
   };
 
 
