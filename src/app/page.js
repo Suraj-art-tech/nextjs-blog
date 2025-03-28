@@ -15,13 +15,28 @@ export default function Home() {
     window.open(openUrl);
   };
 
+
+
   useEffect(() => {
-    fetch("/api/init-vtex-session")
-      .then((j) => j.json())
-      .then((res) => {
-        console.log(res);
-        setData(res);
-      });
+    // fetch("/api/init-vtex-session")
+    //   .then((j) => j.json())
+    //   .then((res) => {
+    //     console.log(res);
+    //     setData(res);
+    //   });
+
+    fetch(
+      `http://vtexid.vtex.com.br/api/vtexid/pub/authentication/start?appStart=true&scope=nagarropartnerind&accountName=nagarropartnerind&callbackUrl=${window.location.origin}&returnUrl=%2F`,
+      {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include', // Ensures cookies are included
+      }
+    ).then((res)=>res.json()).then((r) => {
+      console.log(r)
+    })
   }, []);
 
   return (
