@@ -30,6 +30,7 @@ export default function Home() {
       {
         method: 'GET',
         headers: {
+          'Host': `${window.location.host}`,
           'Content-Type': 'application/json',
         },
         credentials: 'include', // Ensures cookies are included
