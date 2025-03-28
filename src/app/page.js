@@ -18,27 +18,27 @@ export default function Home() {
 
 
   useEffect(() => {
-    // fetch("/api/init-vtex-session")
-    //   .then((j) => j.json())
-    //   .then((res) => {
-    //     console.log(res);
-    //     setData(res);
-    //   });
+    fetch("/api/init-vtex-session")
+      .then((j) => j.json())
+      .then((res) => {
+        console.log(res);
+        setData(res);
+      });
 
-    fetch(
-      `https://vtexid.vtex.com.br/api/vtexid/pub/authentication/start?appStart=true&scope=nagarropartnerind&accountName=nagarropartnerind&callbackUrl=${window.location.origin}&returnUrl=%2F`,
-      {
-        method: 'GET',
-        headers: {
-          'TEST': `${window.location.host}`,
-          'Host': `${window.location.host}`,
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include', // Ensures cookies are included
-      }
-    ).then((res)=>res.json()).then((r) => {
-      console.log(r)
-    })
+    // fetch(
+    //   `https://vtexid.vtex.com.br/api/vtexid/pub/authentication/start?appStart=true&scope=nagarropartnerind&accountName=nagarropartnerind&callbackUrl=${window.location.origin}&returnUrl=%2F`,
+    //   {
+    //     method: 'GET',
+    //     headers: {
+    //       'TEST': `${window.location.host}`,
+    //       'Host': `${window.location.host}`,
+    //       'Content-Type': 'application/json',
+    //     },
+    //     credentials: 'include', // Ensures cookies are included
+    //   }
+    // ).then((res)=>res.json()).then((r) => {
+    //   console.log(r)
+    // })
   }, []);
 
   return (

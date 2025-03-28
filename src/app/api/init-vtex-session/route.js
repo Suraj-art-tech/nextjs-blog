@@ -5,10 +5,9 @@ export async function GET(req) {
   const protocol = req.headers.get("x-forwarded-proto") || "http"; // Detects HTTP or HTTPS
   const requestDomain = `${protocol}://${host}`; // Full domain
 
-  console.log('Print Req', req)
   try {
     const externalResponse = await fetch(
-      `http://vtexid.vtex.com.br/api/vtexid/pub/authentication/start?appStart=true&scope=nagarropartnerind&accountName=nagarropartnerind&callbackUrl=https://abc.com&returnUrl=%2F`,
+      `http://vtexid.vtex.com.br/api/vtexid/pub/authentication/start?appStart=true&scope=nagarropartnerind&accountName=nagarropartnerind&callbackUrl=https://www.surajhub.com&returnUrl=%2F`,
       {
         method: 'GET',
         headers: {
