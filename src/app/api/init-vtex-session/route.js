@@ -1,9 +1,14 @@
 import { NextResponse } from 'next/server';
 
-export async function GET() {
+export async function GET(req) {
+  const host = req.headers.get("host"); // Gets the domain (e.g., example.com:3000)
+  const protocol = req.headers.get("x-forwarded-proto") || "http"; // Detects HTTP or HTTPS
+  const requestDomain = `${protocol}://${host}`; // Full domain
+
+  //console.log('Rq', requestDomain)
   try {
     const externalResponse = await fetch(
-      'http://vtexid.vtex.com.br/api/vtexid/pub/authentication/start?appStart=true&scope=nagarropartnerind&accountName=nagarropartnerind&callbackUrl=/&returnUrl=/',
+      `http://vtexid.vtex.com.br/api/vtexid/pub/authentication/start?appStart=true&scope=nagarropartnerind&accountName=nagarropartnerind&callbackUrl=${requestDomain}&returnUrl=/`,
       {
         method: 'GET',
         headers: {
@@ -17,7 +22,7 @@ export async function GET() {
     const rawHeaders = externalResponse.headers;
     const cookies = rawHeaders.getSetCookie?.() || rawHeaders.get('set-cookie');
 
-    console.log('Cookies', cookies)
+   // console.log('Cookies', cookies)
     const data = await externalResponse.json();
     const res = NextResponse.json(data);
 
