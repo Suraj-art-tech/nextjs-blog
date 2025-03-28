@@ -8,7 +8,7 @@ export async function GET(req) {
   console.log('Print Req', req)
   try {
     const externalResponse = await fetch(
-      `http://vtexid.vtex.com.br/api/vtexid/pub/authentication/start?appStart=true&scope=nagarropartnerind&accountName=nagarropartnerind&callbackUrl=nextjs-blog-blue-eta-60.vercel.app&returnUrl=/`,
+      `http://vtexid.vtex.com.br/api/vtexid/pub/authentication/start?appStart=true&scope=nagarropartnerind&accountName=nagarropartnerind&callbackUrl=nextjs-blog-blue-eta-60.vercel.app`,
       {
         method: 'GET',
         headers: {
