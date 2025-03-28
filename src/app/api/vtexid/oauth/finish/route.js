@@ -10,7 +10,7 @@ export async function GET(req) {
     const { authCookieName, authCookieValue, accountAuthCookieName, accountAuthCookieValue } = params;
 
     // Determine user's domain dynamically (assuming it's provided in the callbackUrl query param)
-    const callbackUrl = params.callbackUrl || 'http://localhost:3000';
+    const callbackUrl = params.callbackUrl || 'https://www.surajhub.com';
 
     const res = NextResponse.redirect(callbackUrl);
 
