@@ -1,7 +1,29 @@
-import Image from 'next/image'
-import styles from './page.module.css'
+"use client";
+
+import Image from "next/image";
+import styles from "./page.module.css";
+import { useEffect, useState } from "react";
 
 export default function Home() {
+  const [data, setData] = useState([]);
+
+  const onClick = () => {
+    const { authenticationToken } = data;
+    console.log('Auth Token', authenticationToken);
+    console.log('authenticationToken',authenticationToken)
+    const openUrl = `http://vtexid.vtex.com.br/api/vtexid/pub/authentication/oauth/redirect?authenticationToken=${authenticationToken}&providerName=Google`;
+    window.open(openUrl);
+  };
+
+  useEffect(() => {
+    fetch("/api/init-vtex-session")
+      .then((j) => j.json())
+      .then((res) => {
+        console.log(res);
+        setData(res);
+      });
+  }, []);
+
   return (
     <main className={styles.main}>
       <div className={styles.description}>
@@ -15,7 +37,7 @@ export default function Home() {
             target="_blank"
             rel="noopener noreferrer"
           >
-            By{' '}
+            By{" "}
             <Image
               src="/vercel.svg"
               alt="Vercel Logo"
@@ -28,15 +50,13 @@ export default function Home() {
         </div>
       </div>
 
-      <div className={styles.center}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
+      <div>
+        <button
+          onClick={onClick}
+          className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-lg shadow-sm hover:shadow-md transition-shadow"
+        >
+          Sign in with Google
+        </button>
       </div>
 
       <div className={styles.grid}>
@@ -91,5 +111,5 @@ export default function Home() {
         </a>
       </div>
     </main>
-  )
+  );
 }
