@@ -22,21 +22,18 @@ export async function GET(req) {
     const res = NextResponse.redirect(callbackUrl);
 
     if (vtexCookies) {
-      // Split multiple cookies and re-set them for your domain
+      /* Split multiple cookies and re-set them for your domain */
       const cookiesArray = vtexCookies.split(", ");
       console.log('Cookie Array', cookiesArray);
       cookiesArray.forEach((cookie) => {
-        res.headers.append(
-          "Set-Cookie",
-          cookie.replace(
-            "domain=nagarropartnerind.myvtex.com",
-            `domain=${host}`
-          )
+        const modifiedCookie = cookie.replace(
+          "domain=nagarropartnerind.myvtex.com",
+          `domain=${host}`
         );
-      });
+        res.headers.append("Set-Cookie", modifiedCookie);
+      });    
     }
 
-    console.log('Res', res.headers)
     return res;
   } catch (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });
