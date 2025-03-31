@@ -33,12 +33,12 @@ export async function GET(req) {
     // Modify and append cookies
     cookiesArray.forEach((cookieStr) => {
       const parsedCookie = setCookie.parse(cookieStr)[0];
-
+      console.log('ParsedCookies', parsedCookie)
       if (!parsedCookie) return;
       
       let modifiedCookie = `${parsedCookie.name}=${parsedCookie.value}; Path=/; Secure; HttpOnly; SameSite=None;`;
 
-      console.log('ParsedCookies', parsedCookie)
+      
       if (parsedCookie.Expires) {
         modifiedCookie += ` Expires=${parsedCookie.Expires};`;
       }
