@@ -21,10 +21,11 @@ export async function GET(req) {
     /* Determine user's domain dynamically (assuming it's provided in the callbackUrl query param) */
     const callbackUrl = `${requestDomain}/auth/success`;
 
-     /* Read raw headers to get cookies */
-     const rawHeaders = externalResponse.headers;
-     const cookies = rawHeaders.getSetCookie?.() || rawHeaders.get('set-cookie');
+    /* Read raw headers to get cookies */
+    const rawHeaders = externalResponse.headers;
+    const cookies = rawHeaders.getSetCookie?.() || rawHeaders.get('set-cookie');
 
+    console.log('Cookies', cookies);
     const res = NextResponse.redirect(callbackUrl);
 
     if (cookies) {
