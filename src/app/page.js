@@ -2,44 +2,43 @@
 
 import Image from "next/image";
 import styles from "./page.module.css";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 export default function Home() {
+  const oAuthRef = useRef(null);
   const [data, setData] = useState([]);
+
 
   const onClick = () => {
     const { authenticationToken } = data;
-    console.log('Auth Token', authenticationToken);
-    console.log('authenticationToken',authenticationToken)
-    const openUrl = `http://vtexid.vtex.com.br/api/vtexid/pub/authentication/oauth/redirect?authenticationToken=${authenticationToken}&providerName=Google`;
-    window.open(openUrl, "popupWindow", "width=600,height=400,scrollbars=yes,resizable=yes");
+    const authUrl = `http://vtexid.vtex.com.br/api/vtexid/pub/authentication/oauth/redirect?authenticationToken=${authenticationToken}&providerName=Google`;
+    oAuthRef.current = window.open(authUrl, "popupWindow", "width=600,height=400,scrollbars=yes,resizable=yes");
   };
 
-
-
-  useEffect(() => {
+  const initiateSession = useCallback(() => {
     fetch("/api/init-vtex-session")
       .then((j) => j.json())
-      .then((res) => {
-        console.log(res);
-        setData(res);
-      });
-
-    // fetch(
-    //   `https://vtexid.vtex.com.br/api/vtexid/pub/authentication/start?appStart=true&scope=nagarropartnerind&accountName=nagarropartnerind&callbackUrl=${window.location.origin}&returnUrl=%2F`,
-    //   {
-    //     method: 'GET',
-    //     headers: {
-    //       'TEST': `${window.location.host}`,
-    //       'Host': `${window.location.host}`,
-    //       'Content-Type': 'application/json',
-    //     },
-    //     credentials: 'include', // Ensures cookies are included
-    //   }
-    // ).then((res)=>res.json()).then((r) => {
-    //   console.log(r)
-    // })
+      .then((res) => setData(res));
   }, []);
+
+  useEffect(() => {
+    initiateSession();
+    const messageListener = (event) => {
+      if (event.origin !== window.location.origin) return;
+
+      if (event.data === "authenticated") {
+        oAuthRef.current.close();
+        window.location.href = "/";
+      }
+    };
+
+    window.addEventListener("message", messageListener);
+
+    // Cleanup event listener when the component unmounts
+    return () => {
+      window.removeEventListener("message", messageListener);
+    };
+  }, [initiateSession, oAuthRef.current]);
 
   return (
     <main className={styles.main}>
