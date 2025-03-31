@@ -35,9 +35,10 @@ export async function GET(req) {
       const parsedCookie = setCookie.parse(cookieStr)[0];
 
       if (!parsedCookie) return;
-
+      
       let modifiedCookie = `${parsedCookie.name}=${parsedCookie.value}; Path=/; Secure; HttpOnly; SameSite=None;`;
 
+      console.log('ParsedCookies', parsedCookie)
       if (parsedCookie.Expires) {
         modifiedCookie += ` Expires=${parsedCookie.Expires};`;
       }
