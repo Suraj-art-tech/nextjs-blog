@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 
+/** Final finish OAuth on the master workspace account */
 const masterWSURI = 'https://nagarropartnerind.myvtex.com';
 
 export async function GET(req) {
