@@ -1,5 +1,5 @@
-import { NextResponse } from "next/server";
 import setCookie from "set-cookie-parser";
+import { NextResponse } from "next/server";
 
 const masterWSURI = "https://nagarropartnerind.myvtex.com";
 
@@ -10,46 +10,36 @@ export async function GET(req) {
 
   try {
     const url = new URL(req.url);
-    const externalResponse = await fetch(
-      `${masterWSURI}/api/vtexid/oauth/finish${url.search}`,
-      {
-        method: "GET",
-        headers: {
-          cookie: req.headers.get("cookie") || "", // Forward cookies from client
-        },
-        credentials: "include",
-      }
-    );
+    const externalResponse = await fetch(`${masterWSURI}/api/vtexid/oauth/finish${url.search}`);
 
-    // Extract VTEX cookies
-    const vtexCookies = externalResponse.headers.get("set-cookie") || "";
-    console.log("VTEX Set-Cookie Header:", vtexCookies);
+    /* Extract VTEX cookies */
+    const vtexCookies = externalResponse.headers.get("set-cookie");
 
-    // Parse the received cookies
-    const cookiesArray = setCookie.splitCookiesString(vtexCookies);
-    const res = NextResponse.redirect(`${requestDomain}/auth/success`);
-    res.headers.set("Cache-Control", "no-store");
+    if (!vtexCookies) {
+      console.warn("No cookies received from VTEX API.");
+      return NextResponse.redirect(`${requestDomain}/auth/success`);
+    }
 
-    // Modify and append cookies
-    cookiesArray.forEach((cookieStr) => {
-      const parsedCookie = setCookie.parse(cookieStr)[0];
-      console.log('ParsedCookies', parsedCookie)
-      if (!parsedCookie) return;
+    /* Parse the received cookies */
+    const cookiesArray = setCookie.parse(vtexCookies, { map: false });
+
+    /* Modify the domain of each cookie while preserving attributes */
+    const updatedCookies = cookiesArray.map(cookie => {
+      let cookieString = `${cookie.name}=${cookie.value}; Path=${cookie.path || "/"}; HttpOnly; Secure; SameSite=${cookie.sameSite || "Lax"}; Domain=${host}`;
       
-      let modifiedCookie = `${parsedCookie.name}=${parsedCookie.value}; Path=/; Secure; HttpOnly; SameSite=None;`;
-
-      
-      if (parsedCookie.Expires) {
-        modifiedCookie += ` Expires=${parsedCookie.Expires};`;
+      if (cookie.expires) {
+        cookieString += `; Expires=${new Date(cookie.expires).toUTCString()}`;
+      }
+      if (cookie.maxAge) {
+        cookieString += `; Max-Age=${cookie.maxAge}`;
       }
 
-      if (parsedCookie["Max-Age"]) {
-        modifiedCookie += ` Max-Age=${parsedCookie["Max-Age"]};`;
-      }
-
-      modifiedCookie += ` Domain=${host};`;
-      res.headers.append("Set-Cookie", modifiedCookie);
+      return cookieString;
     });
+
+    /* Create response and set modified cookies */
+    const res = NextResponse.redirect(`${requestDomain}/auth/success`);
+    updatedCookies.forEach(cookie => res.headers.append("Set-Cookie", cookie));
 
     console.log("Final Response Headers:", [...res.headers.entries()]);
     return res;
