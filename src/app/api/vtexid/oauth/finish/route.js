@@ -24,6 +24,7 @@ export async function GET(req) {
     /* Parse the received cookies */
     const cookiesArray = setCookie.parse(vtexCookies, { map: false });
 
+    console.log('Cookies', vtexCookies);
     console.log('Cookies Array', cookiesArray);
     /* Modify the domain of each cookie while preserving attributes */
     const updatedCookies = cookiesArray.map(cookie => {
