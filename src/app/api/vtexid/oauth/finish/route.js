@@ -1,32 +1,34 @@
 import { NextResponse } from 'next/server';
 
+const masterWSURI = 'https://nagarropartnerind.myvtex.com';
+
 export async function GET(req) {
+  const host = req.headers.get("host"); // Gets the domain (e.g., example.com:3000)
+  const protocol = req.headers.get("x-forwarded-proto") || "https"; // Detects HTTP or HTTPS
+  const requestDomain = `${protocol}://${host}`; // Full domain
+
   try {
-    // Parse the URL from the request
+    /* Parse the URL from the request */
     const url = new URL(req.url);
+    const externalResponse = await fetch(
+      `${masterWSURI}/api/vtexid/oauth/finish${url.search}`,
+      {
+        method: 'GET'
+      }
+    );
 
-    // Extract query parameters
-    const params = Object.fromEntries(url.searchParams);
-    const { authCookieName, authCookieValue, accountAuthCookieName, accountAuthCookieValue } = params;
+    /* Determine user's domain dynamically (assuming it's provided in the callbackUrl query param) */
+    const callbackUrl = `${requestDomain}/auth/success`;
 
-    // Determine user's domain dynamically (assuming it's provided in the callbackUrl query param)
-    const callbackUrl = 'https://www.surajhub.com/auth/success';
+     /* Read raw headers to get cookies */
+     const rawHeaders = externalResponse.headers;
+     const cookies = rawHeaders.getSetCookie?.() || rawHeaders.get('set-cookie');
 
     const res = NextResponse.redirect(callbackUrl);
 
-    // Set cookies on the user's domain
-    if (authCookieName && authCookieValue) {
-      res.headers.append(
-        'Set-Cookie',
-        `${authCookieName}=${authCookieValue}; Path=/; HttpOnly; Secure; SameSite=Lax`
-      );
-    }
-
-    if (accountAuthCookieName && accountAuthCookieValue) {
-      res.headers.append(
-        'Set-Cookie',
-        `${accountAuthCookieName}=${accountAuthCookieValue}; Path=/; HttpOnly; Secure; SameSite=Lax`
-      );
+    if (cookies) {
+      /* Ensure cookies are properly formatted and set for the client's domain */
+      res.headers.set('Set-Cookie', cookies);
     }
 
     return res;
