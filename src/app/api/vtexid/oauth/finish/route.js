@@ -33,15 +33,15 @@ export async function GET(req) {
       if (cookie.maxAge) {
         cookieString += `; Max-Age=${cookie.maxAge}`;
       }
-
+          
       return cookieString;
     });
 
     /* Create response and set modified cookies */
     const res = NextResponse.redirect(`${requestDomain}/auth/success`);
+    console.log('Updated Cookies', updatedCookies);
     updatedCookies.forEach(cookie => res.headers.append("Set-Cookie", cookie));
 
-    console.log("Final Response Headers:", [...res.headers.entries()]);
     return res;
   } catch (error) {
     console.error("Error:", error);
