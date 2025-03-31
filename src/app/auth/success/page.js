@@ -6,7 +6,6 @@ function OAuthSuccess() {
     useEffect(() => {
         if (window.opener) {
             window.opener.postMessage("authenticated", window.location.origin);
-            window.close();
         }
     }, [])
 
