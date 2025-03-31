@@ -9,7 +9,7 @@ function OAuthSuccess() {
         }
     }, [])
 
-    return <main>Authentication successful. Closing...</main>
+    return <div>Authentication successful. Closing...</div>
 };
 
 export default OAuthSuccess;
