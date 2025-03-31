@@ -1,7 +1,7 @@
-import { NextResponse } from 'next/server';
+import { NextResponse } from "next/server";
 
 /** Final finish OAuth on the master workspace account */
-const masterWSURI = 'https://nagarropartnerind.myvtex.com';
+const masterWSURI = "https://nagarropartnerind.myvtex.com";
 
 export async function GET(req) {
   const host = req.headers.get("host"); // Gets the domain (e.g., example.com:3000)
@@ -11,30 +11,34 @@ export async function GET(req) {
   try {
     /* Parse the URL from the request */
     const url = new URL(req.url);
-    const externalResponse = await fetch(
-      `${masterWSURI}/api/vtexid/oauth/finish${url.search}`,
-      {
-        method: 'GET'
-      }
-    );
+    const vtexResponse  = await fetch(`${masterWSURI}/api/vtexid/oauth/finish${url.search}`);
 
     /* Determine user's domain dynamically (assuming it's provided in the callbackUrl query param) */
     const callbackUrl = `${requestDomain}/auth/success`;
 
     /* Read raw headers to get cookies */
-    const rawHeaders = externalResponse.headers;
-    const cookies = rawHeaders.getSetCookie?.() || rawHeaders.get('set-cookie');
+    const vtexCookies = vtexResponse.headers.get("set-cookie");
 
-    console.log('Cookies', cookies);
     const res = NextResponse.redirect(callbackUrl);
 
-    if (cookies) {
-      /* Ensure cookies are properly formatted and set for the client's domain */
-      res.headers.set('Set-Cookie', cookies);
+    if (vtexCookies) {
+      // Split multiple cookies and re-set them for your domain
+      const cookiesArray = vtexCookies.split(", ");
+      console.log('Cookie Array', cookiesArray);
+      cookiesArray.forEach((cookie) => {
+        res.headers.append(
+          "Set-Cookie",
+          cookie.replace(
+            "domain=nagarropartnerind.myvtex.com",
+            `domain=${host}`
+          )
+        );
+      });
     }
 
+    console.log('Res', res.headers)
     return res;
   } catch (error) {
-    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+    return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
