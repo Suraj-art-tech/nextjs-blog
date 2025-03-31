@@ -1,41 +1,56 @@
 import { NextResponse } from "next/server";
+import setCookie from "set-cookie-parser";
 
-/** Final finish OAuth on the master workspace account */
 const masterWSURI = "https://nagarropartnerind.myvtex.com";
 
 export async function GET(req) {
-  const host = req.headers.get("host"); // Gets the domain (e.g., example.com:3000)
-  const protocol = req.headers.get("x-forwarded-proto") || "https"; // Detects HTTP or HTTPS
-  const requestDomain = `${protocol}://${host}`; // Full domain
+  const host = req.headers.get("host");
+  const protocol = req.headers.get("x-forwarded-proto") || "https";
+  const requestDomain = `${protocol}://${host}`;
 
   try {
-    /* Parse the URL from the request */
     const url = new URL(req.url);
-    const vtexResponse  = await fetch(`${masterWSURI}/api/vtexid/oauth/finish${url.search}`);
+    const externalResponse = await fetch(
+      `${masterWSURI}/api/vtexid/oauth/finish${url.search}`,
+      {
+        method: "GET",
+        headers: {
+          cookie: req.headers.get("cookie") || "", // Forward incoming cookies
+        },
+        credentials: "include",
+      }
+    );
 
-    /* Determine user's domain dynamically (assuming it's provided in the callbackUrl query param) */
-    const callbackUrl = `${requestDomain}/auth/success`;
+    const vtexCookies = externalResponse.headers.get("set-cookie") || "";
+    console.log("VTEX Set-Cookie Header:", vtexCookies);
 
-    /* Read raw headers to get cookies */
-    const vtexCookies = vtexResponse.headers.get("set-cookie");
+    const cookiesArray = setCookie.splitCookiesString(vtexCookies);
+    const res = NextResponse.redirect(`${requestDomain}/auth/success`);
+    res.headers.set("Cache-Control", "no-store");
 
-    const res = NextResponse.redirect(callbackUrl);
+    cookiesArray.forEach((cookieStr) => {
+      const parsedCookie = setCookie.parse(cookieStr)[0];
 
-    if (vtexCookies) {
-      /* Split multiple cookies and re-set them for your domain */
-      const cookiesArray = vtexCookies.split(", ");
-      console.log('Cookie Array', cookiesArray);
-      cookiesArray.forEach((cookie) => {
-        const modifiedCookie = cookie.replace(
-          "domain=nagarropartnerind.myvtex.com",
-          `domain=${host}`
-        );
-        res.headers.append("Set-Cookie", modifiedCookie);
-      });    
-    }
+      if (!parsedCookie) return;
 
+      let modifiedCookie = `${parsedCookie.name}=${parsedCookie.value}; Path=/; Secure; HttpOnly; SameSite=None;`;
+
+      if (parsedCookie.Expires) {
+        modifiedCookie += ` Expires=${parsedCookie.Expires};`;
+      }
+
+      if (parsedCookie["Max-Age"]) {
+        modifiedCookie += ` Max-Age=${parsedCookie["Max-Age"]};`;
+      }
+
+      modifiedCookie += ` Domain=${host};`;
+      res.headers.append("Set-Cookie", modifiedCookie);
+    });
+
+    console.log("Final Response Headers:", [...res.headers.entries()]);
     return res;
   } catch (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    console.error("Error:", error);
+    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }
