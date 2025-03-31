@@ -10,6 +10,7 @@ export async function GET(req) {
 
   try {
     const url = new URL(req.url);
+    console.log('URL 1:-', `${masterWSURI}/api/vtexid/oauth/finish${url.search}`);
     const externalResponse = await fetch(`${masterWSURI}/api/vtexid/oauth/finish${url.search}`);
 
     /* Extract VTEX cookies */
@@ -23,6 +24,7 @@ export async function GET(req) {
     /* Parse the received cookies */
     const cookiesArray = setCookie.parse(vtexCookies, { map: false });
 
+    console.log('Cookies Array', cookiesArray);
     /* Modify the domain of each cookie while preserving attributes */
     const updatedCookies = cookiesArray.map(cookie => {
       let cookieString = `${cookie.name}=${cookie.value}; Path=${cookie.path || "/"}; HttpOnly; Secure; SameSite=${cookie.sameSite || "Lax"}; Domain=${host}`;
