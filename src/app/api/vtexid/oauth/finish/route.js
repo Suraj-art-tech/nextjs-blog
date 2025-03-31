@@ -15,19 +15,22 @@ export async function GET(req) {
       {
         method: "GET",
         headers: {
-          cookie: req.headers.get("cookie") || "", // Forward incoming cookies
+          cookie: req.headers.get("cookie") || "", // Forward cookies from client
         },
         credentials: "include",
       }
     );
 
+    // Extract VTEX cookies
     const vtexCookies = externalResponse.headers.get("set-cookie") || "";
     console.log("VTEX Set-Cookie Header:", vtexCookies);
 
+    // Parse the received cookies
     const cookiesArray = setCookie.splitCookiesString(vtexCookies);
     const res = NextResponse.redirect(`${requestDomain}/auth/success`);
     res.headers.set("Cache-Control", "no-store");
 
+    // Modify and append cookies
     cookiesArray.forEach((cookieStr) => {
       const parsedCookie = setCookie.parse(cookieStr)[0];
 
