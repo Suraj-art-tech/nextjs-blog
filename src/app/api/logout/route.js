@@ -23,7 +23,7 @@ export async function GET(req) {
     console.log('2:- REQ DOMAIN COOKIES', cookies?.split(';'))
 
     // Parse cookies using set-cookie-parser
-    const parsedCookies = setCookie.parse(cookies);
+    const parsedCookies = setCookie.parse(cookies, { map: false });
 
     console.log('3:- Parsed COOKIES', parsedCookies)
     // Create a response object to redirect the user
