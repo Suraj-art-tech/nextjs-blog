@@ -11,6 +11,7 @@ export async function GET(req) {
     const vtexRes = await fetch(`http://vtexid.vtex.com.br/api/vtexid/pub/logout?scope=nagarropartnerind`, {
       method: 'GET',
       headers: {
+        'Cookie': req.headers.get('cookie'),
         'Content-Type': 'application/json',
       },
       credentials: 'include', // Ensures cookies are included
