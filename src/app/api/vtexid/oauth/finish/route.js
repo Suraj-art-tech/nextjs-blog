@@ -14,6 +14,7 @@ export async function GET(req) {
     const externalResponse = await fetch(`${masterWSURI}/api/vtexid/oauth/finish${url.search}`);
 
     /* Extract VTEX cookies */
+    const rawHeaders = externalResponse.headers;
     const vtexCookies = rawHeaders.getSetCookie?.() || rawHeaders.get('set-cookie');
 
     console.log('LOG 2:- VTEX COOKIES', vtexCookies)
