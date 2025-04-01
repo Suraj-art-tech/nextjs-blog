@@ -8,7 +8,7 @@ export async function GET(req) {
 
   try {
     // Call VTEX logout endpoint
-    const vtexRes = await fetch(`${vtexConfig.VTEXIDPUBURI}/api/vtexid/pub/logout?scope=${vtexConfig.scope}`);
+    const vtexRes = await fetch(`http://vtexid.vtex.com.br/api/vtexid/pub/logout?scope=nagarropartnerind`);
 
     /* Extract VTEX cookies */
     const rawHeaders = vtexRes.headers;
