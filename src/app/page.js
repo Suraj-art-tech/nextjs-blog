@@ -9,10 +9,18 @@ export default function Home() {
   const [data, setData] = useState([]);
 
 
-  const onClick = () => {
+  const onLogin = () => {
     const { authenticationToken } = data;
     const authUrl = `http://vtexid.vtex.com.br/api/vtexid/pub/authentication/oauth/redirect?authenticationToken=${authenticationToken}&providerName=Google`;
     oAuthRef.current = window.open(authUrl, "popupWindow", "width=600,height=400,scrollbars=yes,resizable=yes");
+  };
+
+  const onLogout = () => {
+    fetch("/api/logout")
+      .then((j) => j.json())
+      .then((res) => {
+        console.log('Res', res);
+      });
   };
 
   const initiateSession = useCallback(() => {
@@ -66,12 +74,18 @@ export default function Home() {
         </div>
       </div>
 
-      <div>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <button
-          onClick={onClick}
+          onClick={onLogin}
           className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-lg shadow-sm hover:shadow-md transition-shadow"
         >
           Sign in with Google
+        </button>
+        <button
+          onClick={onLogout}
+          className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-lg shadow-sm hover:shadow-md transition-shadow"
+        >
+          Logout
         </button>
       </div>
 
