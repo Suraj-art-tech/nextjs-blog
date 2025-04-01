@@ -21,8 +21,11 @@ export async function GET(req) {
     const rawHeaders = vtexRes.headers;
     const vtexCookies = rawHeaders.getSetCookie?.() || rawHeaders.get('set-cookie');
 
-    console.log('1:- VTEX COOKIES', vtexCookies)
+    
 
+    const cookiesArray = setCookie.parse(vtexCookies, { map: false });
+
+    console.log('2dssdv:- Parsed Cookies', cookiesArray)
     // Get the cookies from the request
     // const cookies = req.headers.get('cookie');
     // const cookiesArr = cookies?.split(';');
