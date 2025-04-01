@@ -20,7 +20,7 @@ export async function GET(req) {
     // Get the cookies from the request
     const cookies = req.headers.get('cookie') || '';
     
-    console.log('2:- REQ DOMAIN COOKIES', cookies)
+    console.log('2:- REQ DOMAIN COOKIES', cookies?.split(';'))
 
     // Parse cookies using set-cookie-parser
     const parsedCookies = setCookie.parse(cookies);
@@ -45,7 +45,7 @@ export async function GET(req) {
     // Log the cookies that are set in the response for debugging
     const allCookies = response.cookies.getAll();
     console.log('Final Cookies:', allCookies);
-    
+
     return response;
   } catch (error) {
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
