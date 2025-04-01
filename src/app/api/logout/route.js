@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import setCookie from "set-cookie-parser";
 import vtexConfig from '../../../utils/config';
 
 export async function GET(req) {
