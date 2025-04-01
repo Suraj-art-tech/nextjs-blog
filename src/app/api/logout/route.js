@@ -28,8 +28,8 @@ export async function GET(req) {
     cookierNameArr.forEach(cookieName => {
       response.cookies.set(cookieName, '', {
         path: '/',
-        domain: host,
         httpOnly: true,
+        domain: `.${host}`,
         expires: new Date(0),  // Expire immediately
         secure: protocol === 'https',
       });

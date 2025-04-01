@@ -11,7 +11,7 @@ export default function Home() {
 
   const onLogin = () => {
     const { authenticationToken } = data;
-    const authUrl = `http://vtexid.vtex.com.br/api/vtexid/pub/authentication/oauth/redirect?authenticationToken=${authenticationToken}&providerName=Google`;
+    const authUrl = `https://vtexid.vtex.com.br/api/vtexid/pub/authentication/oauth/redirect?authenticationToken=${authenticationToken}&providerName=Google`;
     oAuthRef.current = window.open(authUrl, "popupWindow", "width=600,height=400,scrollbars=yes,resizable=yes");
   };
 

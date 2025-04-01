@@ -7,7 +7,7 @@ export async function GET(req) {
 
   try {
     const externalResponse = await fetch(
-      `http://vtexid.vtex.com.br/api/vtexid/pub/authentication/start?appStart=true&scope=nagarropartnerind&accountName=nagarropartnerind&callbackUrl=${requestDomain}&returnUrl=%2F`,
+      `https://vtexid.vtex.com.br/api/vtexid/pub/authentication/start?appStart=true&scope=nagarropartnerind&accountName=nagarropartnerind&callbackUrl=${requestDomain}&returnUrl=%2F`,
       {
         method: 'GET',
         headers: {
