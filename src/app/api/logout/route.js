@@ -18,29 +18,22 @@ export async function GET(req) {
     console.log('1:- VTEX COOKIES', vtexCookies)
 
     // Get the cookies from the request
-    const cookies = req.headers.get('cookie') || '';
-    
-    console.log('2:- REQ DOMAIN COOKIES', cookies?.split(';'))
+    const cookies = req.headers.get('cookie');
+    const cookiesArr = cookies?.split(';');
+    const cookierNameArr = cookiesArr.map((cookie) => cookie.split('=')[0]);
 
-    // Parse cookies using set-cookie-parser
-    const parsedCookies = setCookie.parse(cookies, { map: false });
-
-    console.log('3:- Parsed COOKIES', parsedCookies)
-    // Create a response object to redirect the user
     const response = NextResponse.redirect(`${requestDomain}`);
 
     // Loop through parsed cookies and expire each of them
-    parsedCookies.forEach((cookie) => {
-      const cookieName = cookie.name;
-
-      // Expire the cookie by setting it to the past
+    cookierNameArr.forEach(cookieName => {
       response.cookies.set(cookieName, '', {
         path: '/',
         domain: host,
-        expires: new Date(0), // Expire the cookie immediately
-        httpOnly: cookie.httpOnly, // Maintain HttpOnly flag
-        secure: protocol === 'https', // Secure cookies only over HTTPS
+        httpOnly: true,
+        expires: new Date(0),  // Expire immediately
+        secure: protocol === 'https',
       });
+      console.log(`Expired cookie: ${cookieName}`);
     });
 
     // Log the cookies that are set in the response for debugging
