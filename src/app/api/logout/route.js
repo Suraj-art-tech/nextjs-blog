@@ -25,6 +25,7 @@ export async function GET(req) {
     // Parse cookies using set-cookie-parser
     const parsedCookies = setCookie.parse(cookies);
 
+    console.log('3:- Parsed COOKIES', parsedCookies)
     // Create a response object to redirect the user
     const response = NextResponse.redirect(`${requestDomain}`);
 
