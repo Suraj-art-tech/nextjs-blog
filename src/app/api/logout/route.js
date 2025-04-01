@@ -22,35 +22,30 @@ export async function GET(req) {
     const rawHeaders = vtexRes.headers;
     const vtexCookies = rawHeaders.getSetCookie?.() || rawHeaders.get('set-cookie');
 
-    
-
     const cookiesArray = setCookie.parse(vtexCookies, { map: false });
 
-    console.log('2dssdv:- Parsed Cookies', cookiesArray)
-    // Get the cookies from the request
-    // const cookies = req.headers.get('cookie');
-    // const cookiesArr = cookies?.split(';');
-    // const cookierNameArr = cookiesArr.map((cookie) => cookie.split('=')[0]);
+    console.log('Parsed Cookies', cookiesArray)
 
-    const response = NextResponse.redirect(`${requestDomain}`);
+    /* Modify the domain of each cookie while preserving attributes */
+    const updatedCookies = cookiesArray.map(cookie => {
+      let cookieString = `${cookie.name}=${cookie.value}; Path=${cookie.path || "/"}; HttpOnly; Secure; SameSite=${cookie.sameSite || "Lax"}; Domain=${host}`;
 
-    // // Loop through parsed cookies and expire each of them
-    // cookierNameArr.forEach(cookieName => {
-    //   response.cookies.set(cookieName, '', {
-    //     path: '/',
-    //     httpOnly: true,
-    //     domain: `.${host}`,
-    //     expires: new Date(0),  // Expire immediately
-    //     secure: protocol === 'https',
-    //   });
-    //   console.log(`Expired cookie: ${cookieName}`);
-    // });
+      if (cookie.expires) {
+        cookieString += `; Expires=${new Date(cookie.expires).toUTCString()}`;
+      }
+      if (cookie.maxAge) {
+        cookieString += `; Max-Age=${cookie.maxAge}`;
+      }
 
-    // // Log the cookies that are set in the response for debugging
-    // const allCookies = response.cookies.getAll();
-    // console.log('Final Cookies:', allCookies);
+      return cookieString;
+    });
 
-    return response;
+    /* Create response and set modified cookies */
+    const res = NextResponse.redirect(`${requestDomain}`);
+    console.log('Final Logout Res Header', updatedCookies);
+    updatedCookies.forEach(cookie => res.headers.append("Set-Cookie", cookie));
+
+    return res;
   } catch (error) {
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
