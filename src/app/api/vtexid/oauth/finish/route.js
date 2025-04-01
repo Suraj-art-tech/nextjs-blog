@@ -1,7 +1,7 @@
 import setCookie from "set-cookie-parser";
 import { NextResponse } from "next/server";
 
-const masterWSURI = "https://nagarropartnerind.myvtex.com";
+const masterWSURI = "https://master--nagarropartnerind.myvtex.com";
 
 export async function GET(req) {
   const host = req.headers.get("host");
@@ -10,11 +10,13 @@ export async function GET(req) {
 
   try {
     const url = new URL(req.url);
-    console.log('URL 1:-', `${masterWSURI}/api/vtexid/oauth/finish${url.search}`);
+    console.log('LOG 1:-', `${masterWSURI}/api/vtexid/oauth/finish${url.search}`);
     const externalResponse = await fetch(`${masterWSURI}/api/vtexid/oauth/finish${url.search}`);
 
     /* Extract VTEX cookies */
-    const vtexCookies = externalResponse.headers.get("set-cookie");
+    const vtexCookies = rawHeaders.getSetCookie?.() || rawHeaders.get('set-cookie');
+
+    console.log('LOG 2:- VTEX COOKIES', vtexCookies)
 
     if (!vtexCookies) {
       console.warn("No cookies received from VTEX API.");
